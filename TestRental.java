@@ -23,8 +23,8 @@ public class TestRental {
         System.out.println(booking1); // print the first booking
         System.out.println(booking2);
 
-        System.out.println("Booking 1 created for: " + booking1.getClient().getName());// print the first booking's client name
-        System.out.println("Booking 2 created for: " + booking2.getClient().getName());// print the second booking's client name
+        System.out.println("Booking 1 for: " + booking1.getClient().getName());// print the first booking's client name
+        System.out.println("Booking 2 for: " + booking2.getClient().getName());// print the second booking's client name
 
         InsuranceOption insurance1 = new InsuranceOption("Standard", 30.0); // create the first insurance option
         Discount discount1 = new Discount("Loyalty", 10.0); // create the first discount
@@ -34,8 +34,8 @@ public class TestRental {
         Discount discount2 = new Discount("None", 0.0); // create the second discount
         double total2 = booking2.getBaseCost() + insurance2.getInsuranceAmount() - discount2.getDiscountAmount();
 
-        System.out.println("Booking 1 total cost: $" + total1); // print the first booking's total cost
-        System.out.println("Booking 2 total cost: $" + total2); // print the second booking's total cost        
+        System.out.println("total cost for booking 1: $" + total1); // print the first booking's total cost
+        System.out.println("total cost for booking 2: $" + total2); // print the second booking's total cost        
 
 
 
