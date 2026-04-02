@@ -1,43 +1,64 @@
 /**
- * This class is used to test the CarRentalImplementer class.
- * It creates a CarRentalImplementer object, initializes the rental system,
+ * this class is used to test the CarRentalImplementer class.
+ * it creates a CarRentalImplementer object, initializes the rental system,
  * and creates 2 bookings.
- * It then prints the bookings, the total costs, and the client names.
+ * it then prints the bookings, the total costs, and the client names.
  */
-
 public class TestRental {
     public static void main(String[] args) {
         CarRentalImplementer crms = new CarRentalImplementer();
+
+        // step 1: initialize with 1 client, 1 car, 2 agents
         RentalSystem system = crms.initializeRentalSystem(1, 1, 2);
-
-        System.out.println(system);
         Client client = system.getClients().get(0);  // the 1 client (index 0)
-        Car    car    = system.getCars().get(0);      // the 1 car (index 0)
-        Agent  agent1 = system.getAgents().get(0);   // first agent
-        Agent  agent2 = system.getAgents().get(1);   // second agent
+        Car car       = system.getCars().get(0);      // the 1 car (index 0)
+        Agent agent1  = system.getAgents().get(0);    // first agent
+        Agent agent2  = system.getAgents().get(1);    // second agent
 
-//step 2 create 2 bookings
+        // step 2: create 2 bookings
         BookingRecord booking1 = crms.book(client, car, agent1); // book the car for the client with the first agent
         BookingRecord booking2 = crms.book(client, car, agent2); // book the car for the client with the second agent
+        System.out.println("Booking 1 for: " + booking1.getClient().getName());
+        System.out.println("Booking 2 for: " + booking2.getClient().getName());
 
-        System.out.println(booking1); // print the first booking
-        System.out.println(booking2);
+        // step 3: process both with different insurance and discount terms
+        ProcessedRecord processed1 = crms.process(booking1); // Standard insurance, Loyalty discount
+        ProcessedRecord processed2 = crms.process(booking2);
+        // override processed2 because process method only takes 1 parameter (br) and not discount or insurance
+        processed2.setInsuranceOption(new InsuranceOption("Premium", 60.0));
+        processed2.setDiscount(new Discount("None", 0.0));
+        double newTotal = processed2.getBaseCost() - 20.0 + 60.0; // remove original terms, add new ones
+        processed2.setBaseCost(newTotal);
 
-        System.out.println("Booking 1 for: " + booking1.getClient().getName());// print the first booking's client name
-        System.out.println("Booking 2 for: " + booking2.getClient().getName());// print the second booking's client name
+        System.out.println("Booking 1. Insurance: " + processed1.getInsuranceOption().getInsuranceType()
+                + ". Discount: " + processed1.getDiscount().getDiscountType()
+                + ". Total Cost: $" + processed1.getBaseCost());
+        System.out.println("Booking 2. Insurance: " + processed2.getInsuranceOption().getInsuranceType()
+                + ". Discount: " + processed2.getDiscount().getDiscountType()
+                + ". Total Cost: $" + processed2.getBaseCost());
 
-        InsuranceOption insurance1 = new InsuranceOption("Standard", 30.0); // create the first insurance option
-        Discount discount1 = new Discount("Loyalty", 10.0); // create the first discount
-        double total1 = booking1.getBaseCost() + insurance1.getInsuranceAmount() - discount1.getDiscountAmount();
+        // step 4: compare our costs to find the best deal
+        double total1 = processed1.getBaseCost();
+        double total2 = processed2.getBaseCost();
 
-        InsuranceOption insurance2 = new InsuranceOption("Premium", 60.0); // create the second insurance option
-        Discount discount2 = new Discount("None", 0.0); // create the second discount
-        double total2 = booking2.getBaseCost() + insurance2.getInsuranceAmount() - discount2.getDiscountAmount();
+        System.out.println("\n--- Comparing Deals ---");
+        if (total1 < total2) {
+            // booking 1 is better (cheaper)
+            System.out.println("Booking 1 is the better deal at $" + total1);
+        } else if (total2 < total1) {
+            // booking 2 is better (cheaper)
+            System.out.println("Booking 2 is the better deal at $" + total2);
+        } else {
+            // costs are equal
+            System.out.println("Both bookings cost the same: $" + total1);
+        }
 
-        System.out.println("total cost for booking 1: $" + total1); // print the first booking's total cost
-        System.out.println("total cost for booking 2: $" + total2); // print the second booking's total cost        
+        // step 5: finalize the booking with the lower total cost
+        ProcessedRecord betterDeal = (total1 <= total2) ? processed1 : processed2;
+        FinalizedRecord finalized = crms.finalize(betterDeal);
 
-
-
+        // print the finalized booking details
+        System.out.println("\n--- Finalized Booking ---");
+        System.out.println(finalized);
     }
 }
