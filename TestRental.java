@@ -41,7 +41,7 @@ public class TestRental {
         double total1 = processed1.getBaseCost();
         double total2 = processed2.getBaseCost();
 
-        System.out.println("\n--- Comparing Deals ---");
+        System.out.println("COMPARING DEALS:");
         if (total1 < total2) {
             // booking 1 is better (cheaper)
             System.out.println("Booking 1 is the better deal at $" + total1);
@@ -57,8 +57,17 @@ public class TestRental {
         ProcessedRecord betterDeal = (total1 <= total2) ? processed1 : processed2;
         FinalizedRecord finalized = crms.finalize(betterDeal);
 
-        // print the finalized booking details
-        System.out.println("\n--- Finalized Booking ---");
-        System.out.println(finalized);
+        // printing the finalized rental info
+        System.out.println("FINALIZED BOOKING:");
+
+        // print payment info and deposit info
+        System.out.println("Deposit: $" + finalized.getPayment().getDeposit());
+        System.out.println("Total Cost: $" + finalized.getPayment().getRentalCost());
+        System.out.println("Outstanding Balance: $" + finalized.getPayment().getOutstandingBalance());
+
+        // print pick uo info and branch details
+        System.out.println("Pickup Branch: " + finalized.getPickup().getPickupBranch());
+        System.out.println("Pickup Date: " + finalized.getPickup().getDate());
+        System.out.println("Special Instructions: " + finalized.getPickup().getSpecialInstruction());
     }
 }
